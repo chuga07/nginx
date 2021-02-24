@@ -2,32 +2,17 @@ image: docker:latest
 
 stages:
   - builds
-  - test
-  - release
 
 variables:
-  REGISTRY_URL: https://$DOCKER_REGISTRY:8443
-  IMAGE: $DOCKER_REGISTRY:8443/$DOCKER_USER/$CI_PROJECT_NAME:$CI_COMMIT_REF_NAME
-  RELEASE: $DOCKER_REGISTRY:8443/$DOCKER_USER/$CI_PROJECT_NAME:latest
+  RELEASE: $DOCKER_USER/nginx_test:latest
 
 before_script:
-   - docker login $REGISTRY_URL -u $DOCKER_USER -p $DOCKER_PASSWORD
+   - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
 
 build:
   stage: build
   tags:
     - shared_runner
   script:
-   - docker build --pull -t $IMAGE .
-   - docker push $IMAGE
-
-release:
-  stage: release
-  tags:
-    - shared_runner
-  script:
-    - docker pull $IMAGE
-    - docker tag $IMAGE $RELEASE
-    - docker push $RELEASE
-  only:
-    - master
+   - docker build --pull -t $RELEASE .
+   - docker push $RELEASE
